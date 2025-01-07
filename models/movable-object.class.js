@@ -1,59 +1,57 @@
 class MovableObject extends DrawableObject {
-    constructor() {
-        super(); // Aufruf des Konstruktors der Elternklasse
-        this.speed = 10; // Bewegungsgeschwindigkeit
-        this.speedY = 0; // Vertikale Geschwindigkeit
-        this.acceleration = 2.5; // Beschleunigung
-        this.otherDirection = false; // Richtung
-        this.lastHit = 0; // Zeitpunkt des letzten Treffers
-        this.currentImage = 0; // Aktuelles Bild für Animation
+  
+        speed = 10; // Bewegungsgeschwindigkeit
+        speedY = 0; // Vertikale Geschwindigkeit
+        acceleration = 2.5; // Beschleunigung
+        otherDirection = false; // Richtung
+        lastHit = 0; // Zeitpunkt des letzten Treffers
+        currentImage = 0; // Aktuelles Bild für Animation
 
-        this.energy = 100; // Energie des Objekts
-        this.bottleAmount = 0; // Anzahl der Flaschen
-        this.coinAmount = 0; // Anzahl der Münzen
+        energy = 100; // Energie des Objekts
+        bottleAmount = 0; // Anzahl der Flaschen
+        coinAmount = 0; // Anzahl der Münzen
 
         // Audio für das Sammeln von Objekten
-        this.collect_coin_sound = new Audio("collect_bottle.mp3");
-        this.collect_bottle_sound = new Audio("audio/pickupBottle.wav");
-    }
+        collect_coin_sound = new Audio("audio/collect_bottle.mp3");
+   
+  
 
-    // Animation abspielen
+
     playAnimation(images) {
         this.img = this.imageCache[images[this.currentImage % images.length]];
         this.currentImage++;
     }
 
-    // Bewegung nach rechts
     moveRight() {
         this.x += this.speed;
     }
 
-    // Bewegung nach links
+
     moveLeft() {
         this.x -= this.speed;
     }
 
-    // Springen
+
     jump() {
         this.speedY = 30; // Setze die vertikale Geschwindigkeit für den Sprung
     }
+    applyGravity() { // Apply gravity effect to the object
+        this.gravityInterval = setInterval(() => {
+          if (this.isAboveGround() || this.speedY > 0) { // Überprüfe, ob der Charakter über dem Boden ist oder nach oben springt
+            this.y -= this.speedY; // Bewege das Objekt nach oben, wenn speedY positiv ist
+            this.speedY -= this.acceleration; // Verringere die vertikale Geschwindigkeit
+          } else {
+            this.y = 150; // Setze die y-Position auf den Boden, wenn das Objekt den Boden erreicht
+            this.speedY = 0; // Setze die vertikale Geschwindigkeit zurück
+          }
+        }, 1000 / 25); // Intervall für die Schwerkraft
+      }
 
-    // Schwerkraft anwenden
-    applyGravity() {
-        setInterval(() => {
-            if (this.isAboveGround() || this.speedY > 0) {
-                this.y -= this.speedY; // Bewege das Objekt nach oben
-                this.speedY -= this.acceleration; // Verringere die vertikale Geschwindigkeit
-            }
-        }, 1000 / 25); // 25 FPS
+ 
+    isAboveGround() { // Check if object is above ground 
+        return this.y < 150;
     }
-
-    // Überprüfen, ob das Objekt über dem Boden ist
-    isAboveGround() {
-        return this instanceof ThrowableObject || this.y < 180;
-    }
-
-    // Kollisionserkennung
+   
     isColliding(object) {
         return (
             this.x + this.hitBoxX + this.hitBoxWidth > object.x + object.hitBoxX &&
@@ -63,7 +61,6 @@ class MovableObject extends DrawableObject {
         );
     }
 
-    // Treffer verarbeiten
     hit() {
         const timePassed = (new Date().getTime() - this.lastHit) / 1000;
         if (timePassed > 1) {
@@ -72,17 +69,17 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // Überprüfen, ob das Objekt verletzt ist
+
     isHurt() {
         return (new Date().getTime() - this.lastHit) / 1000 < 1;
     }
 
-    // Überprüfen, ob das Objekt tot ist
+
     isDead() {
         return this.energy === 0;
     }
 
-    // Münze sammeln
+
     collectCoin(coin) {
         const index = this.world.level.coins.indexOf(coin);
         if (index !== -1) {
@@ -91,7 +88,7 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // Flasche sammeln
+
     collectBottle(bottle) {
         const index = this.world.level.bottles.indexOf(bottle);
         if (index !== -1) {
@@ -100,9 +97,9 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    // Hilfsmethode zum Abspielen von Geräuschen
+
     playSound(sound) {
-        sound.currentTime = 0; // Setze die Wiedergabezeit zurück
-        sound.play(); // Spiele das Geräusch ab
+        sound.currentTime = 0; 
+        sound.play(); 
     }
 } 

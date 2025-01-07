@@ -14,11 +14,9 @@ body {
     overflow: hidden;
   }
   
-  
-/*   
-  @font-face {
+  /* @font-face {
     font-family: "sylfaen";
-    src: url("fonts/sylfaen.ttf") format("woff");
+    src: url("fonts/Sylfaen.ttf") format("woff");
   } */
   
   .start-button {
@@ -322,6 +320,9 @@ body {
     display: none;
   }
   .show {
+    display: block;
+  }
+  .visible {
     display: block;
   }
   .table-keys {
